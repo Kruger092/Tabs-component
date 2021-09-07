@@ -44,7 +44,7 @@ const App = () => {
           <div className="indicator" style={{ left: `${indicatoPosition}px` }}></div>
         </div>
         <div className="tabs__content">
-          {(<Permissions/>) && currentTab.label} 
+          {currentTab.label || (<Permissions/>)} 
         </div>
     </div>
   );
