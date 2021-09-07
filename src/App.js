@@ -1,49 +1,61 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tabs } from './tabs'
-import { Tab } from './tab'
 import './App.css'
+import { Permissions } from './Permissions';
 
 const options = [
   { value: 1, label: "Tabs 1" },
   { value: 2, label: "Tabs 2" },
-  { value: 3, label: "Tabs 3" }
+  { value: 3, label: "Tabs 3" },
+  { value: 4, label: "Tabs 4" },
+  { value: 5, label: "Tabs 5" }
 ];
 
 const App = () => {
-  const [value, onChange] = useState()
+  const [currentTab, setCurrentTab] = useState({ value: 1, label: "Tabs 1" })
+  const [indicatoPosition, setIndicatoPosition] = useState(0)
 
-  const renderTub = (options, value, onChange) => {
-    return (
-        <ul className="tabs__nav">
-              {options.map((item) => {
-  
-                return (    
-                <li key={item.value} className="tabs__item">
-                  <button 
-                    className={`tabs__button ${(value === item) ? "active" : ''}`}
-                    onClick={() => onChange(item)}
-                  >
-                    {item.label}
-                  </button>
-                </li>
-              )
-              })}
-        </ul>
-    )
+  const onChangeHandler = (value) => {
+    setCurrentTab(value)
   }
+
+  useEffect(() => {
+     const index = currentTab.value
+     const tabs = document.querySelector(`.tabs`);
+     const tab = document.querySelector(`.tabs__item${index}`)
+
+     const leftTabsPosition = Math.round(tabs.getBoundingClientRect().left)
+     const leftTabPosition = Math.round(tab.getBoundingClientRect().left)
+     const diff = leftTabPosition - leftTabsPosition
+
+     setIndicatoPosition(diff)
+  }, [currentTab.value])
 
   return (
     <div className="container">
         <Tabs 
           options={options}
-          value={value}
-          onChange={onChange}
-          renderTub={renderTub}
+          value={{ value: 1, label: "Tabs 1" }}
+          onChange={onChangeHandler}
+          renderTab={renderTab}
+          currentTab={currentTab}
         />
-        <Tab value={value}/>
+        <div className="slider">
+          <div className="indicator" style={{ left: `${indicatoPosition}px` }}></div>
+        </div>
+        <div className="tabs__content">
+          {(<Permissions/>) && currentTab.label} 
+        </div>
     </div>
-
   );
+}
+
+const renderTab = (tab) => {
+  return (
+    <button className={"tabs__button"}>
+      {tab}
+    </button>
+  )
 }
 
 export default App;
